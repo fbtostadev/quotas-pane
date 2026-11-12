@@ -1,6 +1,6 @@
 {
   "name": "@fbtostadev/quotas-pane",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "quotasPane: cards de cota de contas de IA (Claude Code, Codex, Antigravity) para abrir em um portal do Maestri",
   "type": "module",
   "bin": {
