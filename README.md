@@ -4,6 +4,10 @@ Cards de cota de contas de IA (Claude Code, Codex, Antigravity) com botão de re
 Cada card mostra, por conta, o uso e o tempo decorrido das janelas de 5 horas e da Semana (cápsula de uso e tempo), o prazo
 ("deve durar até perto de…") e uma tarja de privacidade sobre o miolo do e-mail.
 
+**A régua de tempo (barra de horas) é parte obrigatória do card e aparece sempre**, em toda janela e em todo estado:
+- com o período conhecido (`renova_epoch` no futuro), mostra o decorrido, a agulha do agora e os cortes (5 de 1 h nas 5 horas, 7 de 24 h na Semana), mesmo com a leitura de uso velha, porque o tempo vem do relógio e não da leitura;
+- sem período conhecido (sem `renova_epoch`, período já renovado ou prazo provisório), aparece vazia, com os cortes e sem agulha.
+
 Os cards descendem do card H1 do `quota-board` (MIT, ver `LICENSE`).
 
 ## Instalação (uma linha)

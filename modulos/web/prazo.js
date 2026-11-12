@@ -35,30 +35,34 @@ function diaDaSemana(epoch, fuso) { return formato("semana|" + fuso, { timeZone:
    fixa o fuso (só os testes). Devolve:
      estado   "sem-dado" | "anterior" | "sem-periodo" (uso zero, prazo provisório) | "em-curso"
      usado    % usado ou null;   sufixo " usado" ou " usado antes"
-     tempo    % do período já decorrido (só "em-curso"), senão null
+     tempo    % do período já decorrido sempre que o período é conhecido (renova_epoch no futuro), mesmo com a leitura de uso
+              velha ou ausente: o tempo vem do relógio. null sem período conhecido ou com prazo provisório.
      termina  a frase do término ("" quando não há);   prazo  a frase de até quando dura */
 function descrever(b, agoraS, o) {
   o = o || {};
   var cinco = b.tipo === "5h", usado = numero(b.usado_pct) ? b.usado_pct : null;
   var r = { estado: "em-curso", usado: usado, sufixo: " usado", tempo: null, termina: "", prazo: "" };
   var duracaoS = b.janela_min * 60;
+  var periodo = numero(b.renova_epoch) && duracaoS > 0 && b.renova_epoch > agoraS && !b.provisorio;   // provisório: prazo inventado pela CLI
+  var inicio = periodo ? b.renova_epoch - duracaoS : null;
+  var t = periodo ? Math.min(100, Math.max(0, 100 * (agoraS - inicio) / duracaoS)) : null;
+  var restante = periodo ? duracao((b.renova_epoch - agoraS) / 60) : "";
+  r.tempo = t;
   if (usado === null) {
     r.estado = "sem-dado";
     r[cinco ? "termina" : "prazo"] = "Sem dados por enquanto";
     return r;
   }
-  if (o.velha || !numero(b.renova_epoch) || !(duracaoS > 0) || b.renova_epoch <= agoraS) {
+  /* Uso zero com prazo provisório: o período não começou; a CLI só projetou um a partir da leitura. */
+  if (!o.velha && usado === 0 && b.provisorio && numero(b.renova_epoch) && b.renova_epoch > agoraS) { r.estado = "sem-periodo"; r.prazo = "Ainda sem uso"; return r; }
+  if (o.velha || !periodo) {
     r.estado = "anterior"; r.sufixo = " usado antes";
     r.prazo = "Ainda não sabemos até quando dura";
-    if (cinco) r.termina = "Sem leitura atual deste período";
+    if (periodo) r.termina = cinco ? "O período de 5 horas termina em " + restante : "Termina em " + restante;
+    else if (cinco) r.termina = "Sem leitura atual deste período";
     return r;
   }
-  if (usado === 0 && b.provisorio) { r.estado = "sem-periodo"; r.prazo = "Ainda sem uso"; return r; }
 
-  var inicio = b.renova_epoch - duracaoS;
-  var t = Math.min(100, Math.max(0, 100 * (agoraS - inicio) / duracaoS));
-  r.tempo = t;
-  var restante = duracao((b.renova_epoch - agoraS) / 60);
   r.termina = cinco ? "O período de 5 horas termina em " + restante : "Termina em " + restante;
   if (usado === 0) r.prazo = "Sem uso para estimar a duração";
   else if (t < MINIMO_PARA_ESTIMAR) r.prazo = "É cedo para dizer até quando dura";

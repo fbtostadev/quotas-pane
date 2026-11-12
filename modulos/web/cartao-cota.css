@@ -131,7 +131,6 @@ html[data-tema="escuro"] .card[data-ferramenta="agy"] { --accent: #a08df0; }
   transition: height 220ms cubic-bezier(.23, 1, .32, 1); }
 .weekly .visual { --slots: 7; --barra: 5px; --faixa-d: 16px; --meia-pilula: 84px; --meia-compacta: 46px; }
 .visual::before { content: ""; position: absolute; left: 0; right: 0; top: -3px; bottom: -3px; }
-.visual.sem-regua { height: calc(var(--barra) + 2px + 6px); }
 @property --slot-gap { syntax: "<length>"; inherits: true; initial-value: 1px; }
 .cap { --slot-gap: 1px; position: absolute; left: 48px; right: 0; top: 3px; box-sizing: border-box; overflow: hidden;
   height: calc(var(--barra) + 1px + var(--faixa) + 2px); border: 1px solid var(--c-borda); border-radius: 8px;
@@ -150,13 +149,9 @@ html[data-tema="escuro"] .card[data-ferramenta="agy"] { --accent: #a08df0; }
   mask-image: repeating-linear-gradient(to right, #000 0, #000 calc(100% / var(--slots) - var(--slot-gap)), transparent calc(100% / var(--slots) - var(--slot-gap)), transparent calc(100% / var(--slots)));
 }
 .fill { display: block; height: 100%; width: 0; border-radius: 0 2px 2px 0; background: var(--accent); }
-/* Sem tempo comprovado: só a barra de uso, com o contorno dela. */
-.visual.sem-regua .cap { overflow: visible; height: auto; border: 0; }
-.visual.sem-regua .cap::after { display: none; }
-.visual.sem-regua .track { position: static; border: 1px solid var(--c-borda); border-radius: 3px; }
-.visual.sem-regua .fill { border-radius: 2px; }
+/* Sem período conhecido a régua continua lá, vazia: sem agulha e sem decorrido. */
+.visual.sem-tempo .agulha, .visual.sem-tempo .decorrido { display: none; }
 .fundo-tempo { position: absolute; inset: 0; background: var(--c-trilho); }
-.regua[hidden] { display: none; }
 .decorrido { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--t, 0) * 1%); background: var(--c-decorrido); }
 /* Os segmentos da régua, só no realce: 5 nas 5 horas e 7 na Semana. O elemento cobre 4/5 ou 6/7 da faixa e cada ladrilho
    acaba numa marca. */

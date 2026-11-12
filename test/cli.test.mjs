@@ -179,3 +179,37 @@ test("help mostra que sem argumentos é a instalação", () => {
   assert.match(saida, /sem argumentos/i);
   assert.match(saida, /rtk proxy npx/);
 });
+
+/* ---------- a régua de tempo (barra de horas) é obrigatória ---------- */
+const carregarPrazo = () => { const ctx = { window: {} }; vm.runInNewContext(doPacote("prazo.js"), ctx); return ctx.window.Prazo; };
+const AGORA = 1_800_000_000;
+const barra5h = (extra) => ({ tipo: "5h", janela_min: 300, usado_pct: 40, renova_epoch: AGORA + 2 * 3600, provisorio: false, ...extra });
+
+test("com o período no futuro há tempo, mesmo com a leitura de uso velha", () => {
+  const Prazo = carregarPrazo();
+  const d = Prazo.descrever(barra5h(), AGORA, { velha: true });
+  assert.equal(d.estado, "anterior");
+  assert.equal(d.sufixo, " usado antes");
+  assert.equal(Math.round(d.tempo), 60, "3 h de 5 h decorridas");
+  assert.match(d.termina, /termina em 2 h/);
+  assert.equal(Math.round(Prazo.descrever(barra5h({ usado_pct: null }), AGORA).tempo), 60, "sem dado de uso, o tempo continua");
+});
+
+test("sem período conhecido não há tempo inventado", () => {
+  const Prazo = carregarPrazo();
+  assert.equal(Prazo.descrever(barra5h({ renova_epoch: AGORA - 60 }), AGORA).tempo, null, "período já renovado");
+  assert.equal(Prazo.descrever(barra5h({ renova_epoch: null }), AGORA).tempo, null, "sem renova_epoch");
+  const provisorio = Prazo.descrever(barra5h({ usado_pct: 0, provisorio: true }), AGORA);
+  assert.equal(provisorio.tempo, null, "prazo provisório");
+  assert.equal(provisorio.estado, "sem-periodo");
+  assert.equal(Prazo.descrever(barra5h({ usado_pct: 0, provisorio: true }), AGORA, { velha: true }).tempo, null, "prazo provisório com leitura velha");
+});
+
+test("o card nunca esconde a régua: sem tempo, ela fica vazia e só a agulha e o decorrido somem", () => {
+  const cotas = doPacote("cotas.js"), css = doPacote("cartao-cota.css");
+  assert.match(cotas, /<div class="regua">/, "a régua nasce visível");
+  assert.match(cotas, /<span class="tempo-nome">Tempo<\/span>/, "o nome Tempo nasce visível");
+  assert.doesNotMatch(cotas, /oculto\(barra\.(regua|nomeTempo)|regua\.hidden|sem-regua/);
+  assert.doesNotMatch(css, /sem-regua|\.regua\[hidden\]/);
+  assert.match(css, /\.visual\.sem-tempo \.agulha, \.visual\.sem-tempo \.decorrido \{ display: none; \}/);
+});

@@ -290,7 +290,7 @@ document.documentElement.style.setProperty("--fase", String(Capsula.fasePulso(ag
 /* O realce espera a intenção do mouse; foco do teclado e toque continuam imediatos.
    O relógio por segundo só escreve enquanto há realce (escreverRelogio só mexe no DOM quando o texto muda). */
 function realcar(barra) {
-  var pode = !barra.no.hidden && !barra.regua.hidden;
+  var pode = !barra.no.hidden;
   if (!pode) barra.mouse = barra.foco = barra.toque = false;
   var ativa = barra.mouse || barra.foco || barra.toque;
   if (barra.ativa === ativa) return;
@@ -301,7 +301,7 @@ function realcar(barra) {
 }
 function escreverRelogio(barra, agoraS) {
   var d = barra.dados;
-  texto(barra.timer, d ? Capsula.timerDaPilula(barra.ativa, !barra.regua.hidden, agoraS, d.renova_epoch, d.janela_min) : "");
+  texto(barra.timer, d ? Capsula.timerDaPilula(barra.ativa, barra.temTempo, agoraS, d.renova_epoch, d.janela_min) : "");
 }
 function encerrarRealces() {
   Object.keys(cards).forEach(function (id) { cards[id].barras.forEach(function (b) {
@@ -333,10 +333,10 @@ var HTML_DIAS = {};
   HTML_DIAS[tipo] = html + "</span>";
 });
 function escreverCortes(barra, b, tempo) {
-  var chave = b.renova_epoch + "|" + b.janela_min;
+  var chave = (tempo === null ? "sem-tempo|" : "") + b.renova_epoch + "|" + b.janela_min;
   if (barra.chaveCortes !== chave) {
     barra.chaveCortes = chave; barra.medida = null;
-    var lista = Prazo.cortes(b);
+    var lista = tempo === null ? [] : Prazo.cortes(b);
     barra.cortes.forEach(function (c, i) { texto(c.rotulo, lista[i] ? lista[i].rotulo : ""); });
   }
   var n = barra.cortes.length, atual = Prazo.corteAtual(tempo, n);
@@ -367,12 +367,12 @@ function criarBarra(card, chave, tipo) {
   no.className = "quota " + (tipo === "semana" ? "weekly" : "primary");
   no.tabIndex = 0; no.setAttribute("role", "group");
   no.innerHTML = '<div class="quota-heading"><span class="quota-label"></span><span class="fim-semana"></span><span class="used"><span class="num"></span><span class="suf"></span></span></div>' +
-    '<div class="visual"><span class="tempo-nome" hidden>Tempo</span><div class="cap"><div class="track"><span class="fill"></span></div>' +
-    '<div class="regua" hidden><span class="fundo-tempo" aria-hidden="true"><span class="decorrido"></span></span><span class="marcas" aria-hidden="true"></span>' + HTML_DIAS[tipo] + '<span class="agulha" aria-hidden="true"></span></div></div>' +
+    '<div class="visual"><span class="tempo-nome">Tempo</span><div class="cap"><div class="track"><span class="fill"></span></div>' +
+    '<div class="regua"><span class="fundo-tempo" aria-hidden="true"><span class="decorrido"></span></span><span class="marcas" aria-hidden="true"></span>' + HTML_DIAS[tipo] + '<span class="agulha" aria-hidden="true"></span></div></div>' +
     '<span class="conector" aria-hidden="true"></span><div class="relogio" aria-hidden="true"><span class="r-rotulo"><span>Decorrido </span></span><span class="r-timer"></span></div></div>' +
     '<p class="frases"><span class="termina"></span><span class="prazo"></span></p>';
   var barra = { card: card, chave: chave, tipo: tipo, no: no, dados: null, estado: null, visual: no.querySelector(".visual"), trilho: no.querySelector(".track"),
-    cheio: no.querySelector(".fill"), regua: no.querySelector(".regua"), nomeTempo: no.querySelector(".tempo-nome"), timer: no.querySelector(".r-timer"),
+    cheio: no.querySelector(".fill"), regua: no.querySelector(".regua"), timer: no.querySelector(".r-timer"),
     rotulo: no.querySelector(".quota-label"), fim: no.querySelector(".fim-semana"),
     usado: no.querySelector(".num"), sufixo: no.querySelector(".suf"), termina: no.querySelector(".termina"), prazo: no.querySelector(".prazo"),
     mouse: false, foco: false, toque: false, ativa: false, timerMouse: null,
@@ -528,11 +528,12 @@ function escreverBarra(card, barra, agoraS, velho) {
     atributo(barra.trilho, "aria-valuenow", String(d.usado));
     atributo(barra.trilho, "aria-label", card.conta.ferramenta_nome + ": " + nome + ", cota usada" + (d.estado === "anterior" ? ", leitura anterior" : ""));
   }
-  oculto(barra.regua, d.tempo === null);
-  oculto(barra.nomeTempo, d.tempo === null);
-  barra.visual.classList.toggle("sem-regua", d.tempo === null);
+  /* A régua de tempo é obrigatória: sempre visível. Sem período conhecido ela fica vazia (sem agulha, decorrido e rótulos). */
+  barra.temTempo = d.tempo !== null;
+  barra.visual.classList.toggle("sem-tempo", !barra.temTempo);
   barra.visual.classList.toggle("tempo-acima", Capsula.tempoAcima(d.tempo, d.usado));
-  if (d.tempo !== null) { variavel(barra.visual, "--t", String(Math.round(d.tempo * 10) / 10)); escreverCortes(barra, b, d.tempo); }
+  variavel(barra.visual, "--t", barra.temTempo ? String(Math.round(d.tempo * 10) / 10) : "0");
+  escreverCortes(barra, b, d.tempo);
   realcar(barra); escreverRelogio(barra, agoraS);
   texto(barra.termina, cinco ? d.termina : "");
   texto(barra.fim, cinco ? "" : d.termina);
