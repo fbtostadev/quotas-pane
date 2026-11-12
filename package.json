@@ -1,0 +1,31 @@
+{
+  "name": "@fbtostadev/quotas-pane",
+  "version": "0.1.0",
+  "description": "quotasPane: cards de cota de contas de IA (Claude Code, Codex, Antigravity) para abrir em um portal do Maestri",
+  "type": "module",
+  "bin": {
+    "quotas-pane": "bin/quotas-pane.mjs"
+  },
+  "files": [
+    "bin",
+    "modulos",
+    "README.md",
+    "DISTRIBUICAO.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT",
+  "author": "fbtostadev (Design Engineer)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fbtostadev/quotas-pane.git"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

@@ -1,0 +1,258 @@
+{
+ "generated_at": 1791648000,
+ "intervals_s": {
+  "claude": 300,
+  "codex": 300,
+  "antigravity": 1200
+ },
+ "consultadas": true,
+ "erro": null,
+ "lista": [
+  {
+   "id": "codex:ex2",
+   "ferramenta": "codex",
+   "ferramenta_nome": "Codex",
+   "email": "conta2@example.com",
+   "plano": "plus",
+   "pasta": "/home/test/codex-2",
+   "consultando": false,
+   "erro": null,
+   "situacao": "ok",
+   "lido_em_epoch": 1791648000,
+   "proxima_consulta_epoch": 1791648300,
+   "intervalo_s": 300,
+   "barras": [
+    {
+     "grupo_rotulo": "",
+     "tipo": "5h",
+     "rotulo": "5h",
+     "janela_min": 300,
+     "usado_pct": 10,
+     "renova_epoch": 1791655200,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "",
+     "tipo": "semana",
+     "rotulo": "Semana",
+     "janela_min": 10080,
+     "usado_pct": 10,
+     "renova_epoch": 1791889920,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    }
+   ]
+  },
+  {
+   "id": "codex:ex3",
+   "ferramenta": "codex",
+   "ferramenta_nome": "Codex",
+   "email": "conta3@example.com",
+   "plano": "plus",
+   "pasta": "/home/test/codex-3",
+   "consultando": false,
+   "erro": null,
+   "situacao": "ok",
+   "lido_em_epoch": 1791648000,
+   "proxima_consulta_epoch": 1791648300,
+   "intervalo_s": 300,
+   "barras": [
+    {
+     "grupo_rotulo": "",
+     "tipo": "5h",
+     "rotulo": "5h",
+     "janela_min": 300,
+     "usado_pct": 40,
+     "renova_epoch": 1791658800,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "",
+     "tipo": "semana",
+     "rotulo": "Semana",
+     "janela_min": 10080,
+     "usado_pct": 40,
+     "renova_epoch": 1792010880,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    }
+   ]
+  },
+  {
+   "id": "claude:ex9",
+   "ferramenta": "claude",
+   "ferramenta_nome": "Claude Code",
+   "email": "conta9@example.com",
+   "plano": "max",
+   "pasta": "/home/test/claude-9",
+   "consultando": false,
+   "erro": null,
+   "situacao": "ok",
+   "lido_em_epoch": 1791648000,
+   "proxima_consulta_epoch": 1791648300,
+   "intervalo_s": 300,
+   "barras": [
+    {
+     "grupo_rotulo": "",
+     "tipo": "5h",
+     "rotulo": "5h",
+     "janela_min": 300,
+     "usado_pct": 97.95918367346938,
+     "renova_epoch": 1791651600,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "",
+     "tipo": "semana",
+     "rotulo": "Semana",
+     "janela_min": 10080,
+     "usado_pct": 99.26144756277697,
+     "renova_epoch": 1791768960,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    }
+   ]
+  },
+  {
+   "id": "claude:ex10",
+   "ferramenta": "claude",
+   "ferramenta_nome": "Claude Code",
+   "email": "conta10@example.com",
+   "plano": "max",
+   "pasta": "/home/test/claude-10",
+   "consultando": false,
+   "erro": null,
+   "situacao": "ok",
+   "lido_em_epoch": 1791648000,
+   "proxima_consulta_epoch": 1791648300,
+   "intervalo_s": 300,
+   "barras": [
+    {
+     "grupo_rotulo": "",
+     "tipo": "5h",
+     "rotulo": "5h",
+     "janela_min": 300,
+     "usado_pct": 94.11764705882352,
+     "renova_epoch": 1791651600,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "",
+     "tipo": "semana",
+     "rotulo": "Semana",
+     "janela_min": 10080,
+     "usado_pct": 95.72649572649573,
+     "renova_epoch": 1791768960,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    }
+   ]
+  },
+  {
+   "id": "agy:ex19",
+   "ferramenta": "agy",
+   "ferramenta_nome": "Antigravity",
+   "email": "conta19@example.com",
+   "plano": "pro",
+   "pasta": "/home/test/agy-19",
+   "consultando": false,
+   "erro": null,
+   "situacao": "ok",
+   "lido_em_epoch": 1791648000,
+   "proxima_consulta_epoch": 1791648300,
+   "intervalo_s": 300,
+   "barras": [
+    {
+     "grupo_rotulo": "Gemini",
+     "tipo": "5h",
+     "rotulo": "5h",
+     "janela_min": 300,
+     "usado_pct": 0,
+     "renova_epoch": 1791666000,
+     "provisorio": true,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "Gemini",
+     "tipo": "semana",
+     "rotulo": "Semana",
+     "janela_min": 10080,
+     "usado_pct": 0,
+     "renova_epoch": 1792252800,
+     "provisorio": true,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "Claude/GPT",
+     "tipo": "5h",
+     "rotulo": "5h",
+     "janela_min": 300,
+     "usado_pct": 73,
+     "renova_epoch": 1791657000,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "Claude/GPT",
+     "tipo": "semana",
+     "rotulo": "Semana",
+     "janela_min": 10080,
+     "usado_pct": 20,
+     "renova_epoch": 1792010880,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    }
+   ]
+  },
+  {
+   "id": "claude:ex20",
+   "ferramenta": "claude",
+   "ferramenta_nome": "Claude Code",
+   "email": "conta20@example.com",
+   "plano": "pro",
+   "pasta": "/home/test/claude-20",
+   "consultando": false,
+   "erro": null,
+   "situacao": "ok",
+   "lido_em_epoch": 1791648000,
+   "proxima_consulta_epoch": 1791648300,
+   "intervalo_s": 300,
+   "barras": [
+    {
+     "grupo_rotulo": "",
+     "tipo": "5h",
+     "rotulo": "5h",
+     "janela_min": 300,
+     "usado_pct": 20,
+     "renova_epoch": 1791658800,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "",
+     "tipo": "semana",
+     "rotulo": "Semana",
+     "janela_min": 10080,
+     "usado_pct": 50,
+     "renova_epoch": 1791889920,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    },
+    {
+     "grupo_rotulo": "Modelo X",
+     "tipo": "semana",
+     "rotulo": "Semana",
+     "janela_min": 10080,
+     "usado_pct": 10,
+     "renova_epoch": 1791889920,
+     "provisorio": false,
+     "lido_em_epoch": 1791648000
+    }
+   ]
+  }
+ ]
+}

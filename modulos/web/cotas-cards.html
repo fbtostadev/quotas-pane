@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cotas — cards</title>
+<style>
+  /* Tema claro por padrão; escuro pelo sistema ou pelo atributo data-tema="escuro" no <html>. */
+  :root {
+    color-scheme: light;
+    --plano: #f2f2ef; --sup: #ffffff; --sup2: #f4f4f1;
+    --tinta: #1b1b1a; --tinta2: #55554f; --apagado: #6d6d68;
+    --fio: #e8e8e4; --fio-forte: #d2d2cd; --barra: #a9a9a2;
+    --critico: #d93a3a; --critico-tinta: #b02a2a;
+    --foco: #2b5fae;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-tema="claro"]) {
+      color-scheme: dark;
+      --plano: #121212; --sup: #1c1c1b; --sup2: #262624;
+      --tinta: #f0f0ec; --tinta2: #b9b9b2; --apagado: #92928c;
+      --fio: #2b2b29; --fio-forte: #3b3b38; --barra: #676761;
+      --critico: #e85c5c; --critico-tinta: #f28a8a;
+      --foco: #8fb4ee;
+    }
+  }
+  :root[data-tema="escuro"] {
+    color-scheme: dark;
+    --plano: #121212; --sup: #1c1c1b; --sup2: #262624;
+    --tinta: #f0f0ec; --tinta2: #b9b9b2; --apagado: #92928c;
+    --fio: #2b2b29; --fio-forte: #3b3b38; --barra: #676761;
+    --critico: #e85c5c; --critico-tinta: #f28a8a;
+    --foco: #8fb4ee;
+  }
+
+  /* Uma escala só: tamanhos 11 / 12.5 / 14 / 20, espaços múltiplos de 4. */
+  * { box-sizing: border-box; }
+  html { background: var(--plano); }
+  body {
+    margin: 0; padding: 16px 20px;
+    background: var(--plano); color: var(--tinta);
+    font: 12.5px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-variant-numeric: tabular-nums; }
+  :focus-visible { outline: 2px solid var(--foco); outline-offset: 2px; }
+  .topo { display: flex; justify-content: flex-end; margin: 0 0 8px; min-height: 24px; }
+  .so-leitor { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  button#refresh {
+    font: inherit; color: var(--tinta2); background: none; border: 0; padding: 3px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; align-self: center;
+    opacity: 0.45; border-radius: 4px; line-height: 1; transition: opacity 0.15s ease, color 0.15s ease;
+  }
+  button#refresh:hover { opacity: 0.95; color: var(--tinta); }
+  button#refresh:focus-visible { outline: 2px solid var(--fio-forte); outline-offset: 2px; opacity: 1; }
+  button#refresh.girando svg {
+    animation: girar-refresh 0.8s linear infinite;
+  }
+  @keyframes girar-refresh {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button#refresh.girando svg {
+      animation: none;
+      opacity: 0.8;
+    }
+  }
+
+  .cartao { background: var(--sup); border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <button id="refresh" type="button" aria-label="Atualizar tudo" title="Atualizar tudo">
+    <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M13.5 6.5A5.5 5.5 0 0 0 3.2 4.8L2 6" />
+      <path d="M2 2.5V6h3.5" />
+      <path d="M2.5 9.5a5.5 5.5 0 0 0 10.3 1.7L14 10" />
+      <path d="M14 13.5V10h-3.5" />
+    </svg>
+  </button>
+</header>
+
+<main id="principal">
+  <section class="cartao" id="contas" aria-label="Cotas das contas">
+    <h2 class="so-leitor">Cotas das contas</h2>
+    <p class="aviso-contas" hidden></p>
+    <div class="contas-grade" id="contas-grade"></div>
+  </section>
+</main>
+
+<script>
+/* Os cards de cota e o botão de refresh. dados.js ao lado (file://), módulos antes de cotas.js, hora na URL contra cache. */
+(function () {
+"use strict";
+var dados = null;
+var estilo = document.createElement("link"); estilo.rel = "stylesheet"; estilo.href = "cartao-cota.css?t=" + Date.now(); document.head.appendChild(estilo);
+var fila = ["prazo.js", "capsula.js", "privacidade.js", "resumo.js", "cotas.js"];
+(function proximo() {
+  var arquivo = fila.shift();
+  if (!arquivo) return;
+  var s = document.createElement("script"); s.src = arquivo + "?t=" + Date.now(); s.onload = proximo; document.head.appendChild(s);
+})();
+
+var MINIMO_GIRO_MS = 1200;     /* uma volta e meia: o giro precisa ser visto mesmo quando a releitura é instantânea */
+var btn = document.getElementById("refresh"), refreshEmAndamento = false;
+
+/* Durante o refresh os cards mostram "Atualizando leitura" (o estado consultando de cada conta). */
+function contasParaDesenhar() {
+  if (!refreshEmAndamento) return dados.contas;
+  return Object.assign({}, dados.contas, { lista: dados.contas.lista.map(function (c) { return Object.assign({}, c, { consultando: true }); }) });
+}
+function desenhar() {
+  if (dados && window.__painelContas) window.__painelContas.desenhar(contasParaDesenhar(), Date.now() / 1000);
+}
+window.__painelDados = function (d) {
+  if (!d || !d.contas) return;
+  dados = d;
+  desenhar();
+};
+function carregar() {
+  var s = document.createElement("script");
+  s.src = "dados.js?t=" + Date.now();
+  s.onload = s.onerror = function () { s.remove(); };
+  document.head.appendChild(s);
+}
+
+function terminarRefresh(titulo) {
+  refreshEmAndamento = false;
+  btn.classList.remove("girando");
+  btn.title = titulo;
+  desenhar();
+}
+/* Atualizar lê o dados.js de novo. Se a sua fonte de dados expõe um endpoint que força uma leitura nova, ponha a URL em
+   data-refresh-url no botão: ela recebe um POST antes da releitura. */
+btn.addEventListener("click", function () {
+  if (refreshEmAndamento) return;
+  refreshEmAndamento = true;
+  btn.classList.add("girando");
+  btn.title = "Atualizando tudo…";
+  desenhar();
+  var minimo = new Promise(function (ok) { setTimeout(ok, MINIMO_GIRO_MS); });
+  var url = btn.dataset.refreshUrl;
+  var fonte = url ? fetch(url, { method: "POST", mode: "no-cors" }).then(function () { return true; }, function () { return false; }) : Promise.resolve(true);
+  fonte.then(function (ok) { carregar(); return minimo.then(function () { terminarRefresh(ok ? "Atualizar tudo" : "Fonte de dados fora do ar"); }); });
+  setTimeout(function () { if (refreshEmAndamento) terminarRefresh("Atualizar tudo"); }, 15000);
+});
+
+carregar();
+setInterval(carregar, 5000);
+setInterval(desenhar, 1000);
+})();
+</script>
+</body>
+</html>
